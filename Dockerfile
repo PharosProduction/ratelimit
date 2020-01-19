@@ -1,9 +1,12 @@
 FROM golang:1.10.4 AS build
 WORKDIR /go/src/github.com/lyft/ratelimit
 
-RUN git clone https://github.com/pharosproduction/ratelimit.git /go/src/github.com/lyft/ratelimit
-
-COPY . /go/src/github.com/lyft/ratelimit
+COPY src src
+COPY script script
+COPY vendor vendor
+COPY glide.yaml glide.yaml
+COPY glide.lock glide.lock
+COPY proto proto
 
 RUN script/install-glide
 RUN glide install
@@ -13,6 +16,3 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /usr/local/bin/ratelimit -ldflags="-w -
 FROM alpine:3.8 AS final
 RUN apk --no-cache add ca-certificates
 COPY --from=build /usr/local/bin/ratelimit /bin/ratelimit
-
-RUN mkdir -p /srv/runtime_data/current/ratelimit
-ENTRYPOINT /bin/ratelimit
