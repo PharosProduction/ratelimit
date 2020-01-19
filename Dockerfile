@@ -3,7 +3,8 @@ WORKDIR /go/src/github.com/lyft/ratelimit
 
 RUN git clone https://github.com/pharosproduction/ratelimit.git /go/src/github.com/lyft/ratelimit
 
-RUN go get -u github.com/golang/protobuf/protoc-gen-go
+COPY . /go/src/github.com/lyft/ratelimit
+
 RUN script/install-glide
 RUN glide install
 
